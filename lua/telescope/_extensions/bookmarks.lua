@@ -11,6 +11,10 @@ local config = require("bookmarks.config").config
 local utils = require("telescope.utils")
 
 local action_state = require("telescope.actions.state")
+local extension = {
+  exports = {},
+}
+local defaults = {}
 
 local function get_text(annotation)
   local pref = string.sub(annotation, 1, 2)
@@ -21,7 +25,8 @@ local function get_text(annotation)
   return ret .. annotation
 end
 
-local function bookmark(opts)
+extension.exports.list = function(opts)
+  print("DEBUGPRINT[28]: bookmarks.lua:24: opts=" .. vim.inspect(opts))
   opts = opts or {}
   local allmarks = config.cache.data
   local marklist = {}
@@ -148,4 +153,21 @@ local function bookmark(opts)
     :find()
 end
 
-return telescope.register_extension({ exports = { list = bookmark } })
+local function extend_config(base, extend)
+  local extension_config = vim.tbl_deep_extend("force", base, extend)
+
+  -- remove default keymaps that have been disabled by the user
+  for _, mode in ipairs({ "i", "n" }) do
+    extension_config.mappings[mode] = vim.tbl_map(function(val)
+      return val ~= false and val or nil
+    end, extension_config.mappings[mode])
+  end
+
+  return extension_config
+end
+
+extension.setup = function(extension_config)
+  extension.config = extend_config(defaults, extension_config)
+end
+
+return telescope.register_extension(extension)

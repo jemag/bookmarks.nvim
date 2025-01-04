@@ -1,7 +1,6 @@
 local void = require("bookmarks.async").void
 local scheduler = require("bookmarks.async").scheduler
 local api = vim.api
--- local uv = vim.loop
 local current_buf = api.nvim_get_current_buf
 local config = require("bookmarks.config")
 local nvim = require("bookmarks.nvim")
