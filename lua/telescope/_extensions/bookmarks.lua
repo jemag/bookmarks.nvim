@@ -140,7 +140,7 @@ local function bookmark(opts)
       previewer = conf.qflist_previewer(opts),
 
       attach_mappings = function(_, map)
-        map("i", "<C-e>", delete_bookmark)
+        map("i", "<C-x>", delete_bookmark)
         map("n", "x", delete_bookmark)
         return true
       end,
